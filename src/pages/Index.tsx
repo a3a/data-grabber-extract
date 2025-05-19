@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ExportHeader from "@/components/ExportHeader";
@@ -6,6 +5,7 @@ import ExportProgress from "@/components/ExportProgress";
 import ExportFileList from "@/components/ExportFileList";
 import { exportService } from "@/services/exportService";
 import { ExportStatus, ExperimentData, DatasetData } from "@/types/dataExport";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [projectId, setProjectId] = useState<string>("");
@@ -44,11 +44,6 @@ const Index = () => {
       return;
     }
 
-    if (!directory) {
-      toast.error("Please specify an export directory");
-      return;
-    }
-
     try {
       // Start export process
       setExportStatus({
@@ -80,7 +75,7 @@ const Index = () => {
       for (const experiment of experiments) {
         try {
           const csvContent = await exportService.exportExperimentToCSV(experiment);
-          const filename = `${directory}/experiment_${experiment.id}.csv`;
+          const filename = `experiment_${experiment.id}.csv`;
           exportService.saveAsFile(csvContent, filename);
           
           // Update status
@@ -125,7 +120,7 @@ const Index = () => {
       for (const dataset of datasets) {
         try {
           const csvContent = await exportService.exportDatasetToCSV(dataset);
-          const filename = `${directory}/dataset_${dataset.id}.csv`;
+          const filename = `dataset_${dataset.id}.csv`;
           exportService.saveAsFile(csvContent, filename);
           
           // Update status

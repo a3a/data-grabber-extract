@@ -132,18 +132,25 @@ export const exportService = {
   
   // Save content as a file (in a browser context)
   saveAsFile(content: string, filename: string): void {
-    // In a browser context, this would create a download
-    // For our simulation, we'll just log it
-    console.log(`Saving file: ${filename}`);
-    console.log(`Content preview: ${content.slice(0, 100)}...`);
+    console.log(`Downloading file: ${filename}`);
     
-    // In a real app with browser API access:
-    // const blob = new Blob([content], { type: 'text/csv' });
-    // const url = URL.createObjectURL(blob);
-    // const a = document.createElement('a');
-    // a.href = url;
-    // a.download = filename;
-    // a.click();
-    // URL.revokeObjectURL(url);
+    // Create a blob from the CSV content
+    const blob = new Blob([content], { type: 'text/csv' });
+    
+    // Create a URL for the blob
+    const url = URL.createObjectURL(blob);
+    
+    // Create a temporary link element
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    
+    // Append to the document, click to trigger download, and remove
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Clean up the URL object
+    URL.revokeObjectURL(url);
   }
 };
